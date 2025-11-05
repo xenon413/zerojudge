@@ -7,7 +7,8 @@ from bs4 import BeautifulSoup
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 ID = "a001"
-TEMP_PATH = "problem_scraper\\template.md"
+ROOT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+TEMP_PATH = ROOT_PATH+"\\problem_scraper\\template.md"
 
 def get_problem(id:str):
     res = {
@@ -31,7 +32,7 @@ def get_template(path:str)->str:
         res = f.read()
     return res
 
-def generate(path:str, name:str, temp:str, data:dict):
+def generate(path:str, temp:str, data:dict):
     # generate with template
     temp = temp.replace("{title}", data["title"])
     temp = temp.replace("{description}", data["description"])
@@ -39,13 +40,20 @@ def generate(path:str, name:str, temp:str, data:dict):
     temp = temp.replace("{output description}", data["output description"])
 
     # write file
-    with open(name, "w", encoding="utf-8") as f:
+    with open(path, "w", encoding="utf-8") as f:
         f.write(temp)
 
 def scan()->list:
-    pass
+    with os.scandir(ROOT_PATH) as problems:
+        problems = [(problem.name, problem.name.split(".")[0])  for problem in problems if problem.is_dir()if "." in problem.name and problem.name[0].isalpha() and problem.name[1:4].isdigit()]
+    return problems
 
 if __name__ == "__main__":
-    temp = get_template(TEMP_PATH)
-    data = get_problem(ID)
-    generate("", "test.md", temp, data)
+    problems = scan()
+    for problem in problems:
+        try:
+            temp = get_template(TEMP_PATH)
+            data = get_problem(problem[1])
+            generate("\\".join([ROOT_PATH, problem[0], "problem.md"]), temp, data)
+        except:
+            print(f"problem: {problem} fail to generate")
