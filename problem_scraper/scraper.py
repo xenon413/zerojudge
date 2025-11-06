@@ -6,9 +6,8 @@ from bs4 import BeautifulSoup
 # Add current directory to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-ID = "a001"
 ROOT_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-TEMP_PATH = ROOT_PATH+"\\problem_scraper\\template.md"
+TEMP_PATH = ROOT_PATH+r"\problem_scraper\template.md"
 
 def get_problem(id:str):
     res = {
